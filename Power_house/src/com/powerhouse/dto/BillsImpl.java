@@ -104,8 +104,15 @@ public class BillsImpl implements Bills {
 	@Override
 	public String toString() {
 		
-		return (bill_id!=0? ("bill_id="+ bill_id+", ") : "")+ "con_id=" + con_id + ", consumer=" + consumer.getName() + "\nmeterReading=" + meterReading
-				+ ", payableAmt=" + payableAmt + ", BillStatus=" + BillStatus +(paymentDate != null ? (", PaymentDate=" + paymentDate): "")+ "\n";
+		return (bill_id!=0? ("\nBill Id: "+ bill_id) : "")
+				+ "\nConsumer Id: " + con_id 
+				+ "\nName: " + consumer.getName()
+				+ "\nConsUnits: " + meterReading
+				+ "\nGross bill: " + meterReading*10
+				+ "\nTax: " + (meterReading*10*2.5)/100
+				+ "\nPayable Amt: " + payableAmt 
+				+ "\nBill Status: " + BillStatus
+				+(paymentDate != null ? ("\nPayment Date: " + paymentDate): "")+ "\n";
 				
 	}
 

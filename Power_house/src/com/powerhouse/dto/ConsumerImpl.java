@@ -91,7 +91,7 @@ public class ConsumerImpl implements Consumer {
 
 	@Override
 	public String toString() {
-		return "ConsumerId=" + ConsumerId + ", name=" + name + ", userName=" + userName + ", mobile=" + mobile + ", registrationDate=" + registrationDate + ", status=" + status
+		return "ConsumerId: " + ConsumerId + " name: " + name + " User Name: " + userName + " Mobile: " + mobile + " Registration Date: " + registrationDate + " Status: " + status
 				+ "\n";
 	}
 

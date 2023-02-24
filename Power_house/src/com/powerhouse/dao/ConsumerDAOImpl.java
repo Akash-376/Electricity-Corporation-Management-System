@@ -41,12 +41,13 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			ps.setDate(5, Date.valueOf(consumer.getRegistrationDate()));
 			
 			if(ps.executeUpdate() > 0) {
-				System.out.println("Consumer registered successfully");
+				System.out.println("*********************************************\n");
+				System.out.println("      Consumer registered successfully");
 				System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-				System.out.println("User name = " + consumer.getUserName());
-				System.out.println("Password = " + consumer.getPassword());
+				System.out.println("      User name = " + consumer.getUserName());
+				System.out.println("      Password = " + consumer.getPassword());
 				System.out.println();
-				System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+				System.out.println("*********************************************\n");
 			}
 			
 		} catch (SQLException e) {
@@ -126,7 +127,7 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			connection = DBUtils.connectToDatabase();
 			
 			//prepare query
-			String UPDATE_QUERY = "UPDATE consumers SET Status = 'In Active' WHERE Consumer_id = ?";
+			String UPDATE_QUERY = "UPDATE consumers SET Status = 'Inactive' WHERE Consumer_id = ?";
 			
 			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
 			

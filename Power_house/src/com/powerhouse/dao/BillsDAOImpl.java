@@ -23,7 +23,7 @@ public class BillsDAOImpl implements BillsDAO{
 	
 
 	@Override
-	public void generateBillByConsumerId(int con_id) throws NoRecordFoundException, SomethingWentWrongException {
+	public void generateBillByConsumerId(int con_id){
 		Bills bill = new BillsImpl(con_id);
 		
 		Connection connection = null;
@@ -31,25 +31,41 @@ public class BillsDAOImpl implements BillsDAO{
 		try {
 			connection = DBUtils.connectToDatabase();
 			
-			// prepare query
-			String INSERT_QUERY = "INSERT INTO Bills (Consumer_id,Units_consumption, Bill_amount, Date_of_bill) VALUES (?, ?, ?, ?)";
+			String SELECT_QUERY = "SELECT Status FROM Consumers WHERE Consumer_id = ?";
 			
-			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			PreparedStatement selectPrepStmt = connection.prepareStatement(SELECT_QUERY);
 			
-			// stuff data in the query
-			ps.setInt(1, bill.getCon_id());
-			ps.setInt(2, bill.getMeterReading());
-			ps.setDouble(3, bill.getPayableAmt());
-			ps.setDate(4, Date.valueOf(bill.getBillDate()));
+			selectPrepStmt.setInt(1, con_id);
+			ResultSet r = selectPrepStmt.executeQuery();
 			
-			if(ps.executeUpdate() > 0) {
-				System.out.println("\n*********************************\n");
-				System.out.println("    Bill generated successfully");
-				System.out.println("\n*********************************\n");
+			boolean isNext = r.next();
+			if(isNext && r.getString("Status").equals("Active")) {
+				// prepare query
+				String INSERT_QUERY = "INSERT INTO Bills (Consumer_id,Units_consumption, Bill_amount, Date_of_bill) VALUES (?, ?, ?, ?)";
+				
+				PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+				
+				// stuff data in the query
+				ps.setInt(1, bill.getCon_id());
+				ps.setInt(2, bill.getMeterReading());
+				ps.setDouble(3, bill.getPayableAmt());
+				ps.setDate(4, Date.valueOf(bill.getBillDate()));
+				
+				if(ps.executeUpdate() > 0) {
+					System.out.println("\n*********************************\n");
+					System.out.println("    Bill generated successfully");
+					System.out.println("\n*********************************\n");
+				}
+			}else
+			if(isNext && r.getString("Status").equals("Inactive")) {
+				System.out.println("Can't generate bill, Because Consumer is Inactivated");
+			}else {
+				System.out.println("No any Consumer registered for this ID");
 			}
+				
 			
 		} catch (SQLException e) {
-			throw new SomethingWentWrongException();
+			
 		}finally {
 			if(connection != null) {
 				try {

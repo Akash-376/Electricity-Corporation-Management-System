@@ -16,6 +16,8 @@ public class Main {
 		AdminUI adminUI = new AdminUI(sc);
 		ConsumerUI consumerUI = new ConsumerUI(sc);
 		
+		System.out.println();
+		System.out.println("       (We can turn night into Day)       ");
 		System.out.println("******************************************");
 		System.out.println("  Welcome to Power house (Uttar Pradesh)");
 		System.out.println("******************************************");
@@ -54,6 +56,7 @@ public class Main {
 						System.out.println("work is under progress..., please try again later");
 						break;
 					case 0:
+						System.out.println("Bye Bye...");
 						System.exit(1);
 					default: System.out.println("Invalid choice");
 						
@@ -71,9 +74,10 @@ public class Main {
 			
 			if(userName.equals("admin") && password.equals("admin")) {
 				System.out.println("Login Successful\n");
-				System.out.println("*******************************");
-				System.out.println("        Welcome Chief          ");
-				System.out.println("*******************************");
+				System.out.println("       Power house (Uttar Pradesh)");
+				System.out.println("******************************************");
+				System.out.println("              Welcome Chief          ");
+				System.out.println("******************************************");
 				int choice;
 				do {
 				
