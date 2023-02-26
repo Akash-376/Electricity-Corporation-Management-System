@@ -14,4 +14,6 @@ public interface ConsumerDAO {
 	public void deleteConsumer(int con_id) throws SomethingWentWrongException;
 	
 	public boolean consumerLogin(String userName, String password) throws NoRecordFoundException;
+	
+	public String consumerStatus(int con_id);
 }

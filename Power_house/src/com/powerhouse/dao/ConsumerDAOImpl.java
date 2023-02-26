@@ -41,13 +41,13 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			ps.setDate(5, Date.valueOf(consumer.getRegistrationDate()));
 			
 			if(ps.executeUpdate() > 0) {
-				System.out.println("*********************************************\n");
+				System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
 				System.out.println("      Consumer registered successfully");
-				System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-				System.out.println("      User name = " + consumer.getUserName());
+				System.out.println("⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊\n");
+				System.out.println("      Username = " + consumer.getUserName());
 				System.out.println("      Password = " + consumer.getPassword());
 				System.out.println();
-				System.out.println("*********************************************\n");
+				System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
 			}
 			
 		} catch (SQLException e) {
@@ -134,9 +134,9 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			ps.setInt(1, con_id);
 			
 			if(ps.executeUpdate() > 0) {
-				System.out.println("\n*****************************\n");
+				System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
 				System.out.println("     Consumer inactivated");
-				System.out.println("\n*****************************\n");
+				System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
 			}
 			
 		} catch (SQLException e) {
@@ -193,13 +193,44 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		
 	}
 	
-//	public static void main(String[] args) throws SomethingWentWrongException, NoRecordFoundException {
-////		Consumer con = new ConsumerImpl("john","john123", "123abc", "1234567890", LocalDate.parse("2022-01-01"));
-//				
-//		ConsumerDAO cd = new ConsumerDAOImpl();
-//		List<Consumer> list = cd.viewAllConsumers();
-//		list.forEach(System.out::print);
-//	}
+	
+	
+	public String consumerStatus(int con_id) {
+		Connection connection = null;
+		try {
+			connection = DBUtils.connectToDatabase();
+			
+			//prepare query
+			String SELECT_QUERY = "SELECT Status FROM Consumers WHERE Consumer_id = ?";
+			
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			ps.setInt(1, con_id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			
+			if(!rs.next()) return "not found";
+			
+			String status = rs.getString("Status");
+			
+			return status;
+			
+		} catch (SQLException e) {
+			
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return "not found";
+		
+		
+	}
 
 	
 }

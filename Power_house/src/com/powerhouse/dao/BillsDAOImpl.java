@@ -58,9 +58,10 @@ public class BillsDAOImpl implements BillsDAO{
 				}
 			}else
 			if(isNext && r.getString("Status").equals("Inactive")) {
-				System.out.println("Can't generate bill, Because Consumer is Inactivated");
+				System.out.println("");
+				System.out.println(" Can't generate bill, Because Consumer is Inactivated");
 			}else {
-				System.out.println("No any Consumer registered for this ID");
+				System.out.println(" No any Consumer registered for this ID");
 			}
 				
 			
@@ -162,7 +163,9 @@ public class BillsDAOImpl implements BillsDAO{
 			
 			ResultSet rs = ps.executeQuery();
 			
-			if(isResultSetEmpty(rs)) throw new NoRecordFoundException("No consumer found");
+			if(isResultSetEmpty(rs)) {
+				return null;
+			}
 			
 			return getAParticularCustomerBillFromResultSet(rs);
 			
@@ -229,15 +232,20 @@ public class BillsDAOImpl implements BillsDAO{
 				return;
 			}
 			double payable = getBillAmountFromResultSet(rs);
+			System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
 			System.out.println("Payable amount = " + payable + " (incl. of all Taxes)");
+			
+			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
 			double receivedAmt;
 
 			//prepare another query			
 			String UPDATE_QUERY = "UPDATE Bills SET Bill_status = 'Paid', Payment_date = ? WHERE Consumer_id = ?";
 			
-			System.out.println("Please enter the Payable amount");
+//			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
+			System.out.println("\n Enter bill amount to pay");
+//			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
 			do {
 				// receiving bill amount from consumer
@@ -250,10 +258,16 @@ public class BillsDAOImpl implements BillsDAO{
 					ps.setInt(2, con_id);
 					
 					if(ps.executeUpdate() > 0) {
-						System.out.println("Payment Successful");
+						System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
+						System.out.println("   Payment Successful");
+						System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 					}
 					
-				}else System.out.println("Please enter valid amount");
+				}else {
+					System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
+					System.out.println("Please enter valid amount");
+					System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
+				}
 			}while(receivedAmt != payable);	
 			
 			
@@ -272,12 +286,41 @@ public class BillsDAOImpl implements BillsDAO{
 		
 	}
 	
-//	public static void main(String[] args) throws NoRecordFoundException, SomethingWentWrongException {
-//		BillsDAO bd = new BillsDAOImpl();
-////		List<Bills> bl =  bd.viewAllBills();
-////		bl.forEach(System.out::print);
-//		
-//		bd.payBill(1);
-//	}
+	
+	
+	public List<Bills> viewAllTransactions(int con_Id) throws NoRecordFoundException, SomethingWentWrongException {
+		Connection connection = null;
+		try {
+			connection = DBUtils.connectToDatabase();
+			
+			//prepare query
+			String SELECT_QUERY = "SELECT Bill_id, C.Consumer_id, Name, Units_consumption, Bill_amount, Date_of_bill, Bill_status, Payment_date FROM Consumers C INNER JOIN Bills B ON C.Consumer_id = B.Consumer_id WHERE C.Consumer_id = ? AND Bill_status = 'Paid'";
+			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
+			
+			ps.setInt(1, con_Id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(isResultSetEmpty(rs)) {
+				return null;
+			}
+			
+			return getBillListFromResultSet(rs);
+			
+		} catch (SQLException e) {
+			throw new SomethingWentWrongException();
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+
 	
 }
