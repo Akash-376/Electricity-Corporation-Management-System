@@ -11,4 +11,5 @@ public interface BillsDAO {
 	public Bills getBillByConsumerId(int con_id) throws NoRecordFoundException, SomethingWentWrongException;
 	public List<Bills> viewAllBills() throws NoRecordFoundException, SomethingWentWrongException;
 	public void payBill(int con_id) throws SomethingWentWrongException, NoRecordFoundException;
+	public List<Bills> viewAllTransactions(int con_Id) throws NoRecordFoundException, SomethingWentWrongException;
 }
