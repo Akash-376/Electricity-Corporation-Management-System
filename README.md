@@ -22,3 +22,7 @@ The user module is designed for the consumers to interact with the system. Users
 - Pay bill
 - View all transactions
 
+## Tech stack used
+- Java
+- MYSQL
+- JDBC
