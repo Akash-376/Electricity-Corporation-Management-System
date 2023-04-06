@@ -8,7 +8,7 @@ The Electricity Corporation Management System is a software application designed
 # ADMIN
 
 The admin module is primarily designed for the management of the system. It allows the admin to register new consumers by capturing their details such as name, address, and contact information. The admin can also delete existing consumers from the system. The admin module also allows the admin to generate bills for each consumer, view all bills that have been generated and keep a record of all transactions made by consumers.
-- Admin userId : admin
+- Admin username : admin
 - Admin password : admin
 
 ## Functionalities
