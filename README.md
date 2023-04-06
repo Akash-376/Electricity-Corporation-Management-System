@@ -47,7 +47,7 @@ The user module is designed for the consumers to interact with the system. Users
 - Open this repository with STS (Spring Tool Suit).
 
 ## Step 3
-- Go into dbdetails.properties file inside the src folder and change the username and password according to your MySql username and password.
+- Go into <b>dbdetails.properties</b> file inside the <b>src</b> folder and change the username and password according to your MySql username and password.
 
 ## Step 4
 - Open your MySql Command Line Client.
