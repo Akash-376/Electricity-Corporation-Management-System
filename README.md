@@ -37,3 +37,50 @@ The user module is designed for the consumers to interact with the system. Users
 
 ## Contact
 - [Linkedin](https://www.linkedin.com/in/akash-chauhan-03b105243/)
+
+# Steps to run this project in your System
+
+## Step 1
+- Clone my repository into your System.
+
+## Step 2
+- Open this repository with STS (Spring Tool Suit).
+
+## Step 3
+- Go into dbdetails.properties file inside the src folder and change the username and password according to your MySql username and password.
+
+## Step 4
+- Open your MySql Command Line Client.
+
+
+## Step 5
+- Copy and paste the following sql queries into your MySql Command Line Client.
+
+```mysql
+CREATE DATABASE Power_house_Electricity;
+
+CREATE TABLE Consumers(
+Consumer_id INT PRIMARY KEY AUTO_INCREMENT,
+Name VARCHAR(20) NOT NULL,
+User_name VARCHAR(50) UNIQUE,
+Password VARCHAR(8) NOT NULL,
+Mobile_no VARCHAR(10) UNIQUE,
+Registration_date date,
+Status VARCHAR(10) DEFAULT 'Active'
+);
+
+
+CREATE TABLE Bills(
+Bill_id INT PRIMARY KEY AUTO_INCREMENT,
+Consumer_id INT,
+Units_consumption INT,
+Bill_amount double(10,2),
+Bill_status VARCHAR(8) DEFAULT 'Pending',
+Date_of_bill datetime,
+Payment_date datetime,
+CONSTRAINT cons_bill
+FOREIGN KEY (Consumer_id) REFERENCES Consumers (Consumer_id)
+);
+```
+
+- Now program is ready to run
