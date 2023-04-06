@@ -59,6 +59,8 @@ The user module is designed for the consumers to interact with the system. Users
 ```mysql
 CREATE DATABASE Power_house_Electricity;
 
+use Power_house_Electricity;
+
 CREATE TABLE Consumers(
 Consumer_id INT PRIMARY KEY AUTO_INCREMENT,
 Name VARCHAR(20) NOT NULL,
@@ -81,6 +83,7 @@ Payment_date datetime,
 CONSTRAINT cons_bill
 FOREIGN KEY (Consumer_id) REFERENCES Consumers (Consumer_id)
 );
+
 ```
 
 - Now program is ready to run
