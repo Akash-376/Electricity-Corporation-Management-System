@@ -65,7 +65,7 @@ CREATE TABLE Consumers(
 Consumer_id INT PRIMARY KEY AUTO_INCREMENT,
 Name VARCHAR(20) NOT NULL,
 User_name VARCHAR(50) UNIQUE,
-Password VARCHAR(8) NOT NULL,
+Password VARCHAR(50) NOT NULL,
 Mobile_no VARCHAR(10) UNIQUE,
 Registration_date date,
 Status VARCHAR(10) DEFAULT 'Active'
