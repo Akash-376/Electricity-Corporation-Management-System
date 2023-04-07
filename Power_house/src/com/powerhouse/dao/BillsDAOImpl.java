@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 
 import com.powerhouse.dto.Bills;
@@ -31,6 +32,7 @@ public class BillsDAOImpl implements BillsDAO{
 		try {
 			connection = DBUtils.connectToDatabase();
 			
+			// first check whether customer is active or not
 			String SELECT_QUERY = "SELECT Status FROM Consumers WHERE Consumer_id = ?";
 			
 			PreparedStatement selectPrepStmt = connection.prepareStatement(SELECT_QUERY);
@@ -85,7 +87,7 @@ public class BillsDAOImpl implements BillsDAO{
 		return (!rs.isBeforeFirst() && rs.getRow() == 0)? true : false;
 	}
 	
-	// get Bill list
+	// get Bill list from resultSet
 	private List<Bills> getBillListFromResultSet(ResultSet rs) throws SQLException{
 		List<Bills> list = new ArrayList<>();
 		
@@ -99,13 +101,8 @@ public class BillsDAOImpl implements BillsDAO{
 			bill.setPayableAmt(rs.getDouble("Bill_amount"));
 			bill.setBillStatus(rs.getString("Bill_status"));
 			bill.setBillDate(rs.getDate("Date_of_bill").toLocalDate());
-//				bill.setPaymentDate(rs.getDate("Payment_date").toLocalDate());
 			
-//				if(rs.getDate("Payment_date").toLocalDate() != null) {
-//					bill.setPaymentDate(rs.getDate("Payment_date").toLocalDate());
-//				}
-			
-			java.sql.Date paymentDate = rs.getDate("Payment_date");
+			Date paymentDate = rs.getDate("Payment_date");
 			if(paymentDate != null) {
 			    bill.setPaymentDate(paymentDate.toLocalDate());
 			}
@@ -118,33 +115,39 @@ public class BillsDAOImpl implements BillsDAO{
 		return list;
 	}
 	
-	// get Bill of a particular Customer
-		private Bills getAParticularCustomerBillFromResultSet(ResultSet rs) throws SQLException{
-			Bills bill = new BillsImpl();
-			while(rs.next()) {
-				Consumer consumer = new ConsumerImpl();
-				
-				bill.setCon_id(rs.getInt("Consumer_id"));//
-				consumer.setName(rs.getString("Name"));//
-				bill.setMeterReading(rs.getInt("Units"));
-				bill.setPayableAmt(rs.getDouble("Payable"));
-				bill.setBillStatus(rs.getString("Bill_status"));
-				
-				bill.setConsumer(consumer);
-				
-				
-			}
-			return bill;
+	// get Bill of a particular Consumer
+	private Bills getAParticularCustomerBillFromResultSet(ResultSet rs) throws SQLException{
+		Bills bill = new BillsImpl();
+		while(rs.next()) {
+			Consumer consumer = new ConsumerImpl();
+			
+			bill.setCon_id(rs.getInt("Consumer_id"));
+			consumer.setName(rs.getString("Name"));
+			bill.setMeterReading(rs.getInt("Units"));
+			bill.setPayableAmt(rs.getDouble("Payable"));
+			bill.setBillStatus(rs.getString("Bill_status"));
+			
+			bill.setConsumer(consumer);
+			
+			
 		}
+		return bill;
+	}
 	
 	
 	// get bill amount from resultSet
 	private double getBillAmountFromResultSet(ResultSet rs) throws SQLException{
 		
-		if(rs.next())
-		return rs.getDouble("Payable");
+		if(rs.next()) return rs.getDouble("Payable");
+		
 		return 0;
 		
+	}
+	
+	
+	private int getConsumerIdByResultSet(ResultSet rs) throws SQLException{
+		if(rs.next()) return rs.getInt("Consumer_id");
+		return 0;
 	}
 		
 
@@ -213,17 +216,51 @@ public class BillsDAOImpl implements BillsDAO{
 		}
 	}
 
-	@Override
-	public void payBill(int con_id) throws SomethingWentWrongException, NoRecordFoundException {
+	
+	// getting condumer Id by using UserName
+	private int getConsumerIdByUserName(String User_name) {
 		Connection connection = null;
 		try {
 			connection = DBUtils.connectToDatabase();
+			// prepare query
+			String SELECT_QUERY = "SELECT Consumer_id FROM consumers WHERE User_name = ?";
+			PreparedStatement prepStatement = connection.prepareStatement(SELECT_QUERY);
+			prepStatement.setString(1, User_name);
+			
+			ResultSet rs = prepStatement.executeQuery();
+			
+			// here resultSet will not be empty, because user is already logged In with some Id
+			return getConsumerIdByResultSet(rs);
+			
+		} catch (SQLException e) {
+			throw new SomethingWentWrongException();
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	
+	@Override
+	public void payBill(String User_name) throws SomethingWentWrongException, NoRecordFoundException {
+		Connection connection = null;
+		try {
+			connection = DBUtils.connectToDatabase();
+			
+			// here consumer Id is needed to pay bill because username is not available in bills table
+			int consumerId = getConsumerIdByUserName(User_name); // this method will provide consumerId 
 			
 			// prepare query
 			String SELECT_QUERY = "SELECT Consumer_id, SUM(Bill_amount) Payable FROM Bills WHERE Consumer_id = ? AND Bill_status = 'Pending' GROUP BY Consumer_id";
 			
 			PreparedStatement prepStatement = connection.prepareStatement(SELECT_QUERY);
-			prepStatement.setInt(1, con_id);
+			prepStatement.setInt(1, consumerId);
 			
 			ResultSet rs = prepStatement.executeQuery();
 			
@@ -231,6 +268,8 @@ public class BillsDAOImpl implements BillsDAO{
 				System.out.println("No any bill found");
 				return;
 			}
+			
+			// if resultSet is not empty then getting bill amount from resultSet
 			double payable = getBillAmountFromResultSet(rs);
 			System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
@@ -238,35 +277,39 @@ public class BillsDAOImpl implements BillsDAO{
 			
 			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
-			double receivedAmt;
+			
 
-			//prepare another query			
+			//prepare another query to update bill status after receiving bill amount
 			String UPDATE_QUERY = "UPDATE Bills SET Bill_status = 'Paid', Payment_date = ? WHERE Consumer_id = ?";
 			
-//			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			System.out.println("\n Enter bill amount to pay");
-//			System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 			
+			double receivedAmt = 0; // initializing with 0
 			do {
 				// receiving bill amount from consumer
-				receivedAmt = scanner.nextDouble();
+				try {
+	                receivedAmt = scanner.nextDouble();
+	            } catch (InputMismatchException e) {
+	                System.out.println("Invalid input");
+	                scanner.next(); // consume invalid input
+	                
+	            }
 				if(receivedAmt == payable) {
 					PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
 					
 					LocalDate payDate = LocalDate.now();
 					ps.setDate(1, Date.valueOf(payDate));
-					ps.setInt(2, con_id);
+					ps.setInt(2, consumerId);
 					
 					if(ps.executeUpdate() > 0) {
 						System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
-						System.out.println("   Payment Successful");
+						System.out.println("   \033[32mPayment Successful\033[0m");
 						System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 					}
 					
 				}else {
-					System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
 					System.out.println("Please enter valid amount");
-					System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍");
+				
 				}
 			}while(receivedAmt != payable);	
 			
@@ -287,17 +330,17 @@ public class BillsDAOImpl implements BillsDAO{
 	}
 	
 	
-	
-	public List<Bills> viewAllTransactions(int con_Id) throws NoRecordFoundException, SomethingWentWrongException {
+	// view all transactions using consumerId
+	public List<Bills> viewAllTransactions(String User_name) throws NoRecordFoundException, SomethingWentWrongException {
 		Connection connection = null;
 		try {
 			connection = DBUtils.connectToDatabase();
 			
 			//prepare query
-			String SELECT_QUERY = "SELECT Bill_id, C.Consumer_id, Name, Units_consumption, Bill_amount, Date_of_bill, Bill_status, Payment_date FROM Consumers C INNER JOIN Bills B ON C.Consumer_id = B.Consumer_id WHERE C.Consumer_id = ? AND Bill_status = 'Paid'";
+			String SELECT_QUERY = "SELECT Bill_id, C.Consumer_id, Name, Units_consumption, Bill_amount, Date_of_bill, Bill_status, Payment_date FROM Consumers C INNER JOIN Bills B ON C.Consumer_id = B.Consumer_id WHERE C.User_name = ? AND Bill_status = 'Paid'";
 			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
 			
-			ps.setInt(1, con_Id);
+			ps.setString(1, User_name);
 			
 			ResultSet rs = ps.executeQuery();
 			

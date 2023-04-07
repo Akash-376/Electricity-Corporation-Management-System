@@ -1,6 +1,6 @@
 package com.powerhouse.exception;
 
-public class NoRecordFoundException extends Exception {
+public class NoRecordFoundException extends RuntimeException {
 	
 	public NoRecordFoundException (String message) {
 		super(message);
