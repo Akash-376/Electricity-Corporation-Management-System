@@ -1,6 +1,8 @@
 # Electricity corporation management system
+<br>
 
-![ele](https://user-images.githubusercontent.com/112763866/221608431-85e05ee8-5c58-40e9-b527-391115b478af.png)
+<img src="https://user-images.githubusercontent.com/112763866/231248151-369d5f21-f8d8-4859-b3eb-555e34a09c80.jpg" alt="Image Description" width="100%" height="350">
+
 
 # Description
 The Electricity Corporation Management System is a software application designed to manage the operations of an electricity corporation. The system is comprised of two modules: the user module and the admin module. It is very helpful to manage users.
