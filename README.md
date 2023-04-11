@@ -30,7 +30,7 @@ The user module is designed for the consumers to interact with the system. Users
 - View all transactions
 
 ## ER Diagram
-![eletricity ER Diagram](https://user-images.githubusercontent.com/112763866/221605736-c252d6a1-4e73-426f-9723-5c0c1fc1d5bd.png)
+<img src="https://user-images.githubusercontent.com/112763866/221605736-c252d6a1-4e73-426f-9723-5c0c1fc1d5bd.png" alt="Image Description" width="100%" height="500">
 
 ## Tech stack used
 - Java
