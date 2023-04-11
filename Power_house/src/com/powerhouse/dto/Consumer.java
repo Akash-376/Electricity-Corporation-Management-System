@@ -11,9 +11,9 @@ public interface Consumer {
 
 	public void setName(String name);
 	
-	public String getUserName();
+	public String getEmail();
 
-	public void setUserName(String userName);
+	public void setEmail(String userName);
 
 	public String getPassword();
 

@@ -24,21 +24,14 @@ public class ConsumerUI {
 		this.scanner = scanner;
 	}
 	
-	public void payBill() throws SomethingWentWrongException, NoRecordFoundException {
-//		System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-		System.out.println("\n Please enter your Consumer ID");
-//		System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-		int conID = scanner.nextInt();
-		billsDAO.payBill(conID);
+	public void payBill(String User_name) throws SomethingWentWrongException, NoRecordFoundException {
+
+		billsDAO.payBill(User_name); // Invoking payBill method of billsDAO layer
 	}
 	
-	public void viewAllTransactions() throws SomethingWentWrongException, NoRecordFoundException {
-//		System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-		System.out.println("\n Please enter your Consumer ID");
-//		System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-		int conID = scanner.nextInt();
+	public void viewAllTransactions(String user_name) throws SomethingWentWrongException, NoRecordFoundException {
 		
-		List<Bills> list =  billsDAO.viewAllTransactions(conID);
+		List<Bills> list =  billsDAO.viewAllTransactions(user_name);
 		
 		if(list != null) {
 			System.out.println(" \n                                                                  ⚠ Power house (Uttar Pradesh)");

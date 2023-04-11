@@ -15,10 +15,11 @@ import com.powerhouse.dto.Consumer;
 import com.powerhouse.dto.ConsumerImpl;
 import com.powerhouse.exception.NoRecordFoundException;
 import com.powerhouse.exception.SomethingWentWrongException;
+import com.powerhouse.security.PasswordHashing;
 
 public class ConsumerDAOImpl implements ConsumerDAO {
 
-	Map<String, String> consumersCeddentialsMap = new HashMap<>();
+	Map<String, String> consumersCreddentialsMap = new HashMap<>();
 	
 	@Override
 	public void registerNewConsumer(Consumer consumer) throws SomethingWentWrongException {
@@ -28,30 +29,31 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		try {
 			connection = DBUtils.connectToDatabase();
 			
-			// prepare query
+			// prepare query to insert consumer details
 			String INSERT_QUERY = "INSERT INTO Consumers (Name, User_name, Password, Mobile_no, Registration_date) VALUES (?, ?, ?, ?, ?)";
 			
 			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
 			
 			// stuff data in the query
 			ps.setString(1, consumer.getName());
-			ps.setString(2, consumer.getUserName());
-			ps.setString(3, consumer.getPassword());
+			ps.setString(2, consumer.getEmail());
+			
+			ps.setString(3, PasswordHashing.doHashing(consumer.getPassword())); // password hashing is applied
 			ps.setString(4, consumer.getMobile());
 			ps.setDate(5, Date.valueOf(consumer.getRegistrationDate()));
 			
 			if(ps.executeUpdate() > 0) {
 				System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-				System.out.println("      Consumer registered successfully");
+				System.out.println("      \033[32mConsumer registered successfully\033[0m");
 				System.out.println("⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊⚊\n");
-				System.out.println("      Username = " + consumer.getUserName());
+				System.out.println("      Username = " + consumer.getEmail());
 				System.out.println("      Password = " + consumer.getPassword());
 				System.out.println();
 				System.out.println("⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
 			}
 			
 		} catch (SQLException e) {
-			throw new SomethingWentWrongException();
+			e.printStackTrace();
 		}finally {
 			if(connection != null) {
 				try {
@@ -72,7 +74,7 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		return (!rs.isBeforeFirst() && rs.getRow() == 0)? true : false;
 	}
 	
-	// get Consumer list
+	// get Consumer list from the resultSet
 	private List<Consumer> getConsumerListFromResultSet(ResultSet rs) throws SQLException{
 		List<Consumer> list = new ArrayList<>();
 		
@@ -80,7 +82,7 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			Consumer consumer = new ConsumerImpl();
 			consumer.setConsumerId(rs.getInt("Consumer_id"));
 			consumer.setName(rs.getString("Name"));
-			consumer.setUserName(rs.getString("User_name"));
+			consumer.setEmail(rs.getString("User_name"));
 			consumer.setMobile(rs.getString("Mobile_no"));
 			consumer.setRegistrationDate(rs.getDate("Registration_date").toLocalDate());
 			consumer.setStatus(rs.getString("Status"));
@@ -126,21 +128,42 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		try {
 			connection = DBUtils.connectToDatabase();
 			
-			//prepare query
-			String UPDATE_QUERY = "UPDATE consumers SET Status = 'Inactive' WHERE Consumer_id = ?";
+			// step to check whether consumer is already activated or not
+			String SELECT_QUERY = "SELECT Status FROM consumers WHERE Consumer_id = ?";
 			
-			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+			PreparedStatement psToGetStatus = connection.prepareStatement(SELECT_QUERY);
 			
-			ps.setInt(1, con_id);
+			psToGetStatus.setInt(1, con_id);
 			
-			if(ps.executeUpdate() > 0) {
-				System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
-				System.out.println("     Consumer inactivated");
-				System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
+			ResultSet rs = psToGetStatus.executeQuery();
+			
+			rs.next();
+			String status = rs.getString("Status");
+			
+			if(status.equalsIgnoreCase("Inactive")) {
+				System.out.println("\033[38;5;208mConsumer is already Inactivated\033[0m");
+			}else {
+				
+				//prepare query
+				String UPDATE_QUERY = "UPDATE consumers SET Status = 'Inactive' WHERE Consumer_id = ?";
+				
+				PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+				
+				ps.setInt(1, con_id);
+				
+				if(ps.executeUpdate() > 0) {
+					System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
+					System.out.println("     \033[32mConsumer inactivated\033[0m");
+					System.out.println("\n⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍⚍\n");
+				}else {
+					System.out.println("\033[31mInvalid consumer Id\033[0m, Please try again");
+				}
 			}
 			
+			
 		} catch (SQLException e) {
-			throw new SomethingWentWrongException();
+			e.printStackTrace();
+			System.out.println("\nPlease try again...");
 		}finally {
 			if(connection != null) {
 				try {
@@ -154,10 +177,13 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		
 	}
 	
+	// method to login Consumer by verifying hashed password
 	public boolean consumerLogin(String userName, String password) {
 		Connection connection = null;
 		try {
 			connection = DBUtils.connectToDatabase();
+			
+			String hashedPassword = PasswordHashing.doHashing(password);
 			
 			//prepare query
 			String SELECT_QUERY = "SELECT Password FROM Consumers WHERE User_name = ?";
@@ -172,7 +198,7 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 			
 			String dbPassword = rs.getString("Password");
 			
-			if(dbPassword.equals(password)) return true;
+			if(dbPassword.equals(hashedPassword)) return true;
 	
 			
 		} catch (SQLException e) {
@@ -194,7 +220,7 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 	}
 	
 	
-	
+	// this method will return the status of the consumer (Active / Inactive)
 	public String consumerStatus(int con_id) {
 		Connection connection = null;
 		try {

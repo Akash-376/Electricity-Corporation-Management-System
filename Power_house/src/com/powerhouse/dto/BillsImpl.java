@@ -19,7 +19,7 @@ public class BillsImpl implements Bills {
 	public BillsImpl(int con_id) {
 		super();
 		this.con_id = con_id;
-		int reading = (int) (90 +( 150-90) * Math.random());
+		int reading = (int) (90 +( 150-90) * Math.random());  // generating random int value b/w 90 to 150
 		this.meterReading = reading;
 		int amt = 120 + (reading*10); // 120 is fixed charge
 		double amtWithTax = (amt*102.5)/100;  // tax is 2.5%
@@ -107,22 +107,15 @@ public class BillsImpl implements Bills {
 		return (bill_id!=0? ("\nBill Id: "+ bill_id) : "")
 				+ "\nConsumer Id: " + con_id 
 				+ "\nName: " + consumer.getName()
-				+ "\nConsUnits: " + meterReading
+				+ "\nUnit consumption: " + meterReading
 				+ "\nGross bill: " + meterReading*10
-				+ "\nTax: " + (meterReading*10*2.5)/100
+				+ "\nFixed charge: " + 120
+				+ "\nTax: " + ((120 + meterReading*10)*2.5)/100
 				+ "\nPayable Amt: " + payableAmt 
 				+ "\nBill Status: " + BillStatus
 				+(paymentDate != null ? ("\nPayment Date: " + paymentDate): "")+ "\n";
 				
 	}
 
-	
-	
-	
-//	public static void main(String[] args) {
-//		int ran = (int) (90 +( 150-90) * Math.random());
-//		System.out.println(ran);
-//		
-//	}
 	
 }

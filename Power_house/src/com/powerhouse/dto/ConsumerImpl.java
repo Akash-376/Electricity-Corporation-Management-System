@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class ConsumerImpl implements Consumer {
 	int ConsumerId;
 	String name;
-	String userName;
+	String email;
 	String password;
 	String mobile;
 	LocalDate registrationDate;
@@ -13,10 +13,10 @@ public class ConsumerImpl implements Consumer {
 	
 	public ConsumerImpl() {}
 	
-	public ConsumerImpl(String name, String userName, String password, String mobile) {
+	public ConsumerImpl(String name, String email, String password, String mobile) {
 		super();
 		this.name = name;
-		this.userName = userName;
+		this.email = email;
 		this.password = password;
 		this.mobile = mobile;
 		this.registrationDate = LocalDate.now();
@@ -42,13 +42,13 @@ public class ConsumerImpl implements Consumer {
 	}
 
 	@Override
-	public String getUserName() {
-		return userName;
+	public String getEmail() {
+		return email;
 	}
 
 	@Override
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class ConsumerImpl implements Consumer {
 
 	@Override
 	public String toString() {
-		return "ConsumerId: " + ConsumerId + " name: " + name + " User Name: " + userName + " Mobile: " + mobile + " Registration Date: " + registrationDate + " Status: " + status
+		return "ConsumerId: " + ConsumerId + ", name: " + name + ", User Name: " + email + ", Mobile: " + mobile + ", Registration Date: " + registrationDate + ", Status: " + status
 				+ "\n";
 	}
 

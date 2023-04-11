@@ -1,6 +1,6 @@
 package com.powerhouse.exception;
 
-public class SomethingWentWrongException extends Exception {
+public class SomethingWentWrongException extends RuntimeException {
 
 	@Override
 	public String toString() {
