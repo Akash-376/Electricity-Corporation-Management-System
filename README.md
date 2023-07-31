@@ -38,7 +38,7 @@ The user module is designed for the consumers to interact with the system. Users
 - JDBC
 
 ## Contact
-- [Linkedin](https://www.linkedin.com/in/akash-chauhan-03b105243/)
+- [Linkedin](https://www.linkedin.com/in/akash-chauhan-729184247/)
 
 # Steps to run this project in your System
 
@@ -56,7 +56,7 @@ The user module is designed for the consumers to interact with the system. Users
 
 
 ## Step 5
-- Copy and paste the following sql queries into your MySql Command Line Client.
+- Copy and paste the following sql code into your MySql Command Line Client.
 
 ```mysql
 CREATE DATABASE Power_house_Electricity;
