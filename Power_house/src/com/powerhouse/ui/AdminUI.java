@@ -58,21 +58,36 @@ public class AdminUI {
 			
 			
 			// email validation
-			System.out.println("Enter email id");
-			String userName = scanner.next();
-			Pattern emailRegex = Pattern.compile("^(.+)@(.+)$");
-			Matcher emailMatcher = emailRegex.matcher(userName);
-			// this loop will run until it will not get a valid format of email id
-	        while (!emailMatcher.matches()) {
-	            System.out.println("\033[31mInvalid email\033[0m, please try again");
+	        String userName;
+
+	        Pattern emailRegex = Pattern.compile("^(.+)@(.+)$");
+
+	        do {
+	            System.out.println("Enter email id");
 	            userName = scanner.next();
-	            emailMatcher = emailRegex.matcher(userName);
-	        }
-			
+
+	            Matcher emailMatcher = emailRegex.matcher(userName);
+
+	            if (!emailMatcher.matches()) {
+	                System.out.println("\033[31mInvalid email\033[0m, please try again");
+	                continue;
+	            }
+
+	            if (consumerDAO.isCustomerAlreadyRegistered(userName)) {
+	                System.out.println("\033[31mThis email is already registered. Please try with another one.\033[0m");
+	                continue;
+	            }
+
+	            break; // Exit the loop if email is valid and not registered
+
+	        } while (true);
+	        
+	        
 			// password validation code
 			System.out.println("Set password (minimum 6 digits requited)");
 			String pass = scanner.next();
-			Pattern passwordRegex = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
+//			Pattern passwordRegex = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
+			Pattern passwordRegex = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=])[a-zA-Z\\d@#$%^&+=]{6,}$");
 			Matcher passwordMatcher = passwordRegex.matcher(pass);
 			// this loop will run until it will not get a Strong password
 	        while (!passwordMatcher.matches()) {

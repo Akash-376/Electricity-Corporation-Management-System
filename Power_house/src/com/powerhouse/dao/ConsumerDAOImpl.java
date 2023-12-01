@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +90,8 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		}
 		return list;
 	}
-
+	
+	// this method will return consumers' list
 	@Override
 	public List<Consumer> viewAllConsumers() throws SomethingWentWrongException, NoRecordFoundException {
 		Connection connection = null;
@@ -257,6 +257,41 @@ public class ConsumerDAOImpl implements ConsumerDAO {
 		
 		
 	}
+
+	// this method is to check whether entered user name is already registered with Electricity corporation on not. 
+	@Override
+	public boolean isCustomerAlreadyRegistered(String userName) {
+	    Connection connection = null;
+	    try {
+	        connection = DBUtils.connectToDatabase();
+
+	        // Prepare query with parameterized statement
+	        String SELECT_QUERY = "SELECT User_name FROM Consumers WHERE User_name = ?";
+	        try (PreparedStatement ps = connection.prepareStatement(SELECT_QUERY)) {
+	            ps.setString(1, userName);
+
+	            try (ResultSet rs = ps.executeQuery()) {
+	                if (rs.next()) {
+	                    return true;
+	                }
+	            }
+	        }
+
+	        return false;
+
+	    } catch (SQLException e) {
+	        throw new SomethingWentWrongException();
+	    } finally {
+	        if (connection != null) {
+	            try {
+	                connection.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
 
 	
 }

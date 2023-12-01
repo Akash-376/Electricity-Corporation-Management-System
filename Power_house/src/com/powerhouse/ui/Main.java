@@ -51,7 +51,6 @@ public class Main {
 			System.out.println("  Please Enter username(email)");
 			String userName = sc.next();
 			
-			
 			// email validation
 			Pattern emailRegex = Pattern.compile("^(.+)@(.+)$");
 			Matcher emailMatcher = emailRegex.matcher(userName);
@@ -62,8 +61,10 @@ public class Main {
 	            emailMatcher = emailRegex.matcher(userName);
 	        }
 			
+	        System.out.println(consumerDAO.isCustomerAlreadyRegistered(userName));
 	        
-	        // password
+	        
+	    	// password
 	        // here I am not adding password validation, Because strong password is already set in DB
 	        // now it is required to just match given password with the password stored in DB
 	        System.out.println("  Enter password");
@@ -98,7 +99,7 @@ public class Main {
 						case 0:
 							System.out.println("Bye Bye...");
 							System.exit(1);
-//						default: System.out.println("Invalid choice");
+	//						default: System.out.println("Invalid choice");
 							
 						}
 						
@@ -112,6 +113,9 @@ public class Main {
 				}while(choice != 0);
 				
 			}else System.out.println("\033[31mWrong credentials. Please try again later");
+				
+	        
+
 		}else {
 			
 			System.out.println("Please enter username    \033[32mhint\033[0m: your designation");
@@ -139,7 +143,7 @@ public class Main {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+	
 					System.out.println("\nPress\n");
 					System.out.println("1. To register a new consumer");
 					System.out.println("2. To view all Consumers list");

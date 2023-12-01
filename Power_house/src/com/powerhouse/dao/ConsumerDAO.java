@@ -46,4 +46,11 @@ public interface ConsumerDAO {
 	 * @return status of the consumer
 	 */
 	public String consumerStatus(int con_id);
+	
+	/**
+	 * This method will accept userName as a parameter
+	 * @param UserName
+	 * @return boolean (true/false) by checking whether userName is already registered or not
+	 */
+	public boolean isCustomerAlreadyRegistered(String userName);
 }
